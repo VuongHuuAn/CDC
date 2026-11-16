@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/tmp/setup-v1-diagram-authoring/module-colors.json",
+    "sha256": "9f3bd11fbbf5e672f18d7b854f936438003f5fe85ef81a5ff2d80c0103a93ba2",
+    "bytes": 3341
+  },
+  "artifact": {
+    "path": "/tmp/setup-v1-diagram-authoring/.archify/architecture-module-colors-20261110-144523/module-colors.html",
+    "sha256": "a934abb718941036cb72ce650a20adf7f8e38d34888a0a6b4aaaad0a713c6f98",
+    "bytes": 817581
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/tmp/setup-v1-diagram-authoring/.archify/architecture-module-colors-20261110-144523/connection-direction-review/module-colors.finalize.json",
+    "summaryReceipt": "/tmp/setup-v1-diagram-authoring/.archify/architecture-module-colors-20261110-144523/connection-direction-review/module-colors.finalize-summary.json",
+    "browserCheckReceipt": "/tmp/setup-v1-diagram-authoring/.archify/architecture-module-colors-20261110-144523/connection-direction-review/module-colors.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-10T04:40:20.030Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2539,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "routesOverSuggestedBends": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [],
+      "detours": [
+        {
+          "relationship": {
+            "from": "console",
+            "to": "connect",
+            "label": "REST :8083",
+            "collectionIndex": 5,
+            "artifactIndex": 6
+          },
+          "bends": 3,
+          "stretch": 1
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "console → connect needs 3 bends: move node console or connect so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

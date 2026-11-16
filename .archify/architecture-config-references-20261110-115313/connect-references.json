@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Connect: file / key / endpoint",
+    "locale": "en",
+    "output": ".archify/architecture-config-references-20261110-115313/connect-references.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "worker_file",
+      "type": "database",
+      "label": "compose/redpanda/compose.yaml",
+      "sublabel": "connect.environment | VM2 .163",
+      "pos": [
+        55,
+        100
+      ],
+      "size": [
+        340,
+        76
+      ]
+    },
+    {
+      "id": "broker",
+      "type": "messagebus",
+      "label": "Redpanda",
+      "sublabel": "miqa-cdc-3 | 192.168.139.163",
+      "pos": [
+        1020,
+        100
+      ],
+      "size": [
+        340,
+        76
+      ]
+    },
+    {
+      "id": "source_files",
+      "type": "database",
+      "label": "source-*.json / 3 file",
+      "sublabel": "connect/connectors/ | VM2 .163",
+      "pos": [
+        55,
+        365
+      ],
+      "size": [
+        340,
+        76
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "pg-micall / pg-misales / pg-miqa",
+      "sublabel": "miqa-cdc-1 | 192.168.139.162",
+      "pos": [
+        1020,
+        365
+      ],
+      "size": [
+        340,
+        76
+      ]
+    },
+    {
+      "id": "sink_file",
+      "type": "database",
+      "label": "ch-sink-all.json",
+      "sublabel": "connect/connectors/ | VM2 .163",
+      "pos": [
+        55,
+        630
+      ],
+      "size": [
+        340,
+        76
+      ]
+    },
+    {
+      "id": "ch",
+      "type": "database",
+      "label": "ClickHouse / cdc.outbox_event",
+      "sublabel": "miqa-cdc-2 | 192.168.139.164",
+      "pos": [
+        1020,
+        630
+      ],
+      "size": [
+        340,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "worker_file",
+      "to": "broker",
+      "label": "BOOTSTRAP_SERVERS / Kafka :9092"
+    },
+    {
+      "from": "source_files",
+      "to": "pg",
+      "label": "database.hostname + port / pgoutput"
+    },
+    {
+      "from": "sink_file",
+      "to": "ch",
+      "label": "hostname + port / HTTP :18123"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Worker tạo kết nối từ khai báo",
+      "items": [
+        "Mũi tên biểu diễn endpoint được file khai báo; file không tự mở kết nối.",
+        "Source và sink đều chạy trong một container Connect trên VM2.",
+        "JSON được gửi qua REST PUT /connectors/<name>/config :8083 hoặc Console GUI."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Ba source cụ thể",
+      "items": [
+        "source-micall.json -> 192.168.139.162:15432 / micall.",
+        "source-misales.json -> 192.168.139.162:25432 / misales.",
+        "source-miqa.json -> 192.168.139.162:35432 / miqa."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Credential và mapping",
+      "items": [
+        "compose/redpanda/.env -> Compose environment -> Connect EnvVarConfigProvider.",
+        "JSON dùng ${env:...}; worker giải tham chiếu lúc đọc cấu hình.",
+        "Sink: topics + topic2TableMap -> database=cdc, table=outbox_event."
+      ]
+    }
+  ],
+  "boundaries": []
+}

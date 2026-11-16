@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "running",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-11-10T04:38:15.549Z",
+  "specification": {
+    "path": "D:\\setup-v1\\.archify\\architecture-vm-ip-hostname-20261110-113808\\candidate.json",
+    "sha256": "ce51775a57bef3f0d8064c55d0287faf4f367552127fc8f99f373bb70d89977a",
+    "bytes": 4547
+  },
+  "artifact": {
+    "path": "D:\\setup-v1\\.archify\\architecture-vm-ip-hostname-20261110-113808\\vm-ip-hostname.html"
+  },
+  "stages": {},
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "D:\\setup-v1\\.archify\\architecture-vm-ip-hostname-20261110-113808\\vm-ip-hostname.finalize.json",
+    "summaryReceipt": "D:\\setup-v1\\.archify\\architecture-vm-ip-hostname-20261110-113808\\vm-ip-hostname.finalize-summary.json"
+  },
+  "visualReview": "not-requested"
+}

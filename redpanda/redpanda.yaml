@@ -1,0 +1,16 @@
+# Broker 1 node — sửa advertised nếu đổi tên service Compose
+redpanda:
+  data_directory: /var/lib/redpanda/data
+  node_id: 0  # ID broker (cluster lab một node)
+  seed_servers: []  # không cần seed khi chỉ một broker
+  rpc_server: {address: 0.0.0.0, port: 33145}  # RPC nội bộ Redpanda
+  advertised_rpc_api: {address: redpanda, port: 33145}  # địa chỉ RPC các node khác thấy
+  kafka_api: [{address: 0.0.0.0, port: 9092}]  # Kafka API lắng nghe trong container
+  advertised_kafka_api: [{address: redpanda, port: 9092}]  # endpoint client/Connect trong mạng Compose
+  admin: [{address: 0.0.0.0, port: 9644}]  # Admin API (health, rpk, Console)
+
+rpk:
+  kafka_api:
+    brokers: ["redpanda:9092"]
+  admin_api:
+    addresses: ["redpanda:9644"]

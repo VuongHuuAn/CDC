@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/tmp/setup-v1-diagram-authoring/file-order.json",
+    "sha256": "26fe435a9cd49ece386f3a5caca9167937b400fe970a73201bbfbad86b323d5b",
+    "bytes": 5451
+  },
+  "artifact": {
+    "path": "/tmp/setup-v1-diagram-authoring/.archify/workflow-file-order-20261110-120156/file-order.html",
+    "sha256": "1d36673f243b1f65ae7c726885b9a03b87e03b2edde6baa01e6634d3dbf736db",
+    "bytes": 830160
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/tmp/setup-v1-diagram-authoring/role-labels-review/file-order.finalize.json",
+    "summaryReceipt": "/tmp/setup-v1-diagram-authoring/role-labels-review/file-order.finalize-summary.json",
+    "browserCheckReceipt": "/tmp/setup-v1-diagram-authoring/role-labels-review/file-order.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-10T04:40:20.030Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2446,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

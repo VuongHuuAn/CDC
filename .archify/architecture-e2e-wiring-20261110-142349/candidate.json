@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Từ INSERT đến SELECT: module và khai báo kết nối",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/architecture-e2e-wiring-20261110-142349/e2e-wiring.html"
+  },
+  "components": [
+    {
+      "id": "pg_config",
+      "type": "database",
+      "label": "Chuẩn bị nguồn",
+      "sublabel": "Compose + WAL + bảng outbox",
+      "pos": [
+        50,
+        50
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "1 / Ghi dữ liệu nguồn",
+      "sublabel": "PostgreSQL x3 / INSERT + WAL",
+      "pos": [
+        50,
+        300
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "source_config",
+      "type": "database",
+      "label": "Đấu nối PostgreSQL",
+      "sublabel": "Host / port / slot / topic",
+      "pos": [
+        480,
+        50
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "source",
+      "type": "backend",
+      "label": "2 / Đọc thay đổi",
+      "sublabel": "Ba source / pgoutput",
+      "pos": [
+        480,
+        300
+      ],
+      "size": [
+        220,
+        76
+      ],
+      "tag": "Connect: cùng worker"
+    },
+    {
+      "id": "broker_config",
+      "type": "database",
+      "label": "Khai báo Kafka",
+      "sublabel": "Listen + advertised endpoint",
+      "pos": [
+        910,
+        50
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "broker",
+      "type": "messagebus",
+      "label": "3 / Lưu sự kiện",
+      "sublabel": "Redpanda / ba topic outbox",
+      "pos": [
+        910,
+        300
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "sink_config",
+      "type": "database",
+      "label": "Đấu nối ClickHouse",
+      "sublabel": "Host / port / topic -> bảng",
+      "pos": [
+        910,
+        1010
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "sink",
+      "type": "backend",
+      "label": "4 / Ghi sang đích",
+      "sublabel": "Một sink / HTTP",
+      "pos": [
+        910,
+        780
+      ],
+      "size": [
+        220,
+        76
+      ],
+      "tag": "Connect: cùng worker"
+    },
+    {
+      "id": "console_config",
+      "type": "database",
+      "label": "Đấu nối quản trị",
+      "sublabel": "Kafka + Admin + REST",
+      "pos": [
+        780,
+        560
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "console",
+      "type": "frontend",
+      "label": "Quan sát / quản lý",
+      "sublabel": "Redpanda Console :8080",
+      "pos": [
+        480,
+        560
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "ch_config",
+      "type": "database",
+      "label": "Chuẩn bị bảng đích",
+      "sublabel": "Schema + khóa gộp trùng",
+      "pos": [
+        50,
+        560
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "ch",
+      "type": "database",
+      "label": "5 / Lưu bảng đích",
+      "sublabel": "ClickHouse / cdc.outbox_event",
+      "pos": [
+        50,
+        780
+      ],
+      "size": [
+        220,
+        76
+      ]
+    },
+    {
+      "id": "read",
+      "type": "backend",
+      "label": "6 / Đọc kết quả",
+      "sublabel": "SELECT ... FINAL",
+      "pos": [
+        50,
+        1010
+      ],
+      "size": [
+        220,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "pg",
+      "to": "source",
+      "label": "pgoutput :15432/25432/35432",
+      "variant": "emphasis"
+    },
+    {
+      "from": "source",
+      "to": "broker",
+      "label": "Produce Kafka :9092",
+      "variant": "emphasis"
+    },
+    {
+      "from": "broker",
+      "to": "sink",
+      "label": "Fetch Kafka :9092",
+      "variant": "emphasis"
+    },
+    {
+      "from": "sink",
+      "to": "ch",
+      "label": "HTTP :18123 -> 8123",
+      "variant": "emphasis"
+    },
+    {
+      "from": "ch",
+      "to": "read",
+      "label": "SQL :9000",
+      "variant": "emphasis"
+    },
+    {
+      "from": "pg_config",
+      "to": "pg",
+      "label": "config + init",
+      "variant": "dashed"
+    },
+    {
+      "from": "source_config",
+      "to": "source",
+      "label": "REST/GUI :8083",
+      "variant": "dashed"
+    },
+    {
+      "from": "broker_config",
+      "to": "broker",
+      "label": "--config",
+      "variant": "dashed"
+    },
+    {
+      "from": "sink_config",
+      "to": "sink",
+      "label": "REST/GUI :8083",
+      "variant": "dashed"
+    },
+    {
+      "from": "console_config",
+      "to": "console",
+      "label": "CONFIG_FILEPATH",
+      "variant": "dashed"
+    },
+    {
+      "from": "ch_config",
+      "to": "ch",
+      "label": "init khi data mới",
+      "variant": "dashed"
+    },
+    {
+      "from": "console",
+      "to": "source",
+      "label": "Connect REST :8083",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "from": "console",
+      "to": "broker",
+      "label": "Kafka:9092 / HTTP:9644"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "VM1 | miqa-cdc-1 | 192.168.139.162",
+      "wraps": [
+        "pg",
+        "pg_config"
+      ],
+      "pad": 24
+    },
+    {
+      "kind": "region",
+      "label": "VM2 | miqa-cdc-3 | 192.168.139.163",
+      "wraps": [
+        "source_config",
+        "source",
+        "broker_config",
+        "broker",
+        "sink_config",
+        "sink",
+        "console_config",
+        "console"
+      ],
+      "pad": 24
+    },
+    {
+      "kind": "region",
+      "label": "VM3 | miqa-cdc-2 | 192.168.139.164",
+      "wraps": [
+        "ch_config",
+        "ch",
+        "read"
+      ],
+      "pad": 24
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Đọc luồng chính theo số 1 -> 6",
+      "items": [
+        "Nét liền xanh: dữ liệu từ INSERT/WAL tới Kafka, ClickHouse và SELECT FINAL.",
+        "PostgreSQL gồm micall / misales / miqa; port 15432 / 25432 / 35432.",
+        "Source x3 và sink x1 là các vai trò trong cùng container Connect."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Khai báo quyết định module kết nối tới đâu",
+      "items": [
+        "Nét đứt: file khai báo hoặc chuẩn bị module; module mới thực hiện I/O.",
+        "Rê chuột lên ô trong guide để xem tên file và khóa cấu hình.",
+        "JSON đăng ký bằng REST/GUI; SQL init chỉ chạy tự động khi data mới."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Nhánh quản trị / mạng nội bộ",
+      "items": [
+        "Console gọi Connect REST :8083 và Redpanda Kafka :9092 / HTTP Admin :9644.",
+        "Kafka 9092 chỉ trong Docker network VM2; source/sink liên VM dùng IP/host port.",
+        "ClickHouse host 18123 -> HTTP 8123; SELECT minh họa chạy trong VM3 qua SQL 9000."
+      ]
+    }
+  ]
+}

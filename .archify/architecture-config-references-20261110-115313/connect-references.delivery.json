@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "fc3c004c-a596-4aa8-bd84-8848baf522ff",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/tmp/setup-v1-diagram-authoring/connect-references.json",
+  "output": "/tmp/setup-v1-diagram-authoring/.archify/architecture-config-references-20261110-115313/connect-references.html",
+  "specification": {
+    "sha256": "c5cc9b39708176136436f0b6b5f335e2d2396e292e9af19b26235244e2c0ce1c",
+    "bytes": 3387
+  },
+  "artifact": {
+    "sha256": "b9d4dcb7dacea37049058f25049d1fd969594a2420d8e875b769255798d94496",
+    "bytes": 814850
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "6b492177-06a3-42d3-92da-139489b12fb1",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/tmp/setup-v1-diagram-authoring/module-colors.json",
+  "output": "/tmp/setup-v1-diagram-authoring/.archify/architecture-module-colors-20261110-144523/module-colors.html",
+  "specification": {
+    "sha256": "9f3bd11fbbf5e672f18d7b854f936438003f5fe85ef81a5ff2d80c0103a93ba2",
+    "bytes": 3341
+  },
+  "artifact": {
+    "sha256": "a934abb718941036cb72ce650a20adf7f8e38d34888a0a6b4aaaad0a713c6f98",
+    "bytes": 817581
+  }
+}

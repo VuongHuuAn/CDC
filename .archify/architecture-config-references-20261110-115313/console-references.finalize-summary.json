@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/tmp/setup-v1-diagram-authoring/console-references.json",
+    "sha256": "68644121857abb3a2ae101f34785f51eabf495a9d38643c9b2d63cae8ef36f02",
+    "bytes": 3655
+  },
+  "artifact": {
+    "path": "/tmp/setup-v1-diagram-authoring/.archify/architecture-config-references-20261110-115313/console-references.html",
+    "sha256": "8ad193f3157d472fb0e41f143e3f476019cabb192161a41942e26c193d823dbe",
+    "bytes": 818318
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/tmp/setup-v1-diagram-authoring/.archify/architecture-config-references-20261110-115313/console-references.finalize.json",
+    "summaryReceipt": "/tmp/setup-v1-diagram-authoring/.archify/architecture-config-references-20261110-115313/console-references.finalize-summary.json",
+    "browserCheckReceipt": "/tmp/setup-v1-diagram-authoring/.archify/architecture-config-references-20261110-115313/console-references.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-10T04:40:20.030Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2656,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

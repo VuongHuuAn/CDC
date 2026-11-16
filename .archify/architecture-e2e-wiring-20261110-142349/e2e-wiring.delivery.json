@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "2e84bb58-8169-4f53-be3b-91f6386ebe30",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/tmp/setup-v1-diagram-authoring/e2e-wiring.json",
+  "output": "/tmp/setup-v1-diagram-authoring/.archify/architecture-e2e-wiring-20261110-142349/e2e-wiring.html",
+  "specification": {
+    "sha256": "f53ecf7ae50a264e9170332bcaaf4e2ec9f7c21c1a0342bff7fc0b46c97eda89",
+    "bytes": 7414
+  },
+  "artifact": {
+    "sha256": "7bda1788fb4524ba46bcbc26cf670d1c0c7720c5d1d296661ab9bac3ad7cec9d",
+    "bytes": 837834
+  }
+}

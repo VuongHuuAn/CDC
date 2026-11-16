@@ -1,0 +1,18 @@
+# Redpanda Console — file mount vào container, không chứa secret
+
+server:
+  listenPort: 8080  # cổng HTTP GUI (map host 8080 trong compose)
+
+kafka:
+  brokers: ["redpanda:9092"]  # kết nối xem topic / message Kafka API
+
+redpanda:
+  adminApi:
+    enabled: true  # bật trang quản trị broker trên GUI
+    urls: ["http://redpanda:9644"]  # Admin API nội bộ Docker network
+
+kafkaConnect:
+  enabled: true  # bật trang connector trên GUI
+  clusters:
+    - name: setupv1-connect  # tên hiển thị (khớp GROUP_ID worker)
+      url: http://connect:8083  # REST Kafka Connect (Debezium + sink)

@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Console: file / key / endpoint",
+    "locale": "en",
+    "output": ".archify/architecture-config-references-20261110-115313/console-references.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "compose",
+      "type": "backend",
+      "label": "compose/redpanda/compose.yaml",
+      "sublabel": "console.environment / console.volumes",
+      "pos": [
+        50,
+        330
+      ],
+      "size": [
+        310,
+        76
+      ]
+    },
+    {
+      "id": "gui",
+      "type": "frontend",
+      "label": "Console",
+      "sublabel": "192.168.139.163:8080",
+      "pos": [
+        590,
+        330
+      ],
+      "size": [
+        260,
+        76
+      ]
+    },
+    {
+      "id": "yaml",
+      "type": "database",
+      "label": "console/config.yaml",
+      "sublabel": "mount: /console/config.yaml",
+      "pos": [
+        590,
+        90
+      ],
+      "size": [
+        260,
+        76
+      ]
+    },
+    {
+      "id": "kafka",
+      "type": "messagebus",
+      "label": "Redpanda / Kafka API",
+      "sublabel": "redpanda:9092",
+      "pos": [
+        1160,
+        100
+      ],
+      "size": [
+        260,
+        76
+      ]
+    },
+    {
+      "id": "admin",
+      "type": "messagebus",
+      "label": "Redpanda / Admin API",
+      "sublabel": "http://redpanda:9644",
+      "pos": [
+        1160,
+        330
+      ],
+      "size": [
+        260,
+        76
+      ]
+    },
+    {
+      "id": "rest",
+      "type": "backend",
+      "label": "Kafka Connect / REST",
+      "sublabel": "http://connect:8083",
+      "pos": [
+        1160,
+        560
+      ],
+      "size": [
+        260,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "compose",
+      "to": "gui",
+      "label": "CONFIG_FILEPATH"
+    },
+    {
+      "from": "gui",
+      "to": "yaml",
+      "label": "read YAML"
+    },
+    {
+      "from": "gui",
+      "to": "kafka",
+      "label": "kafka.brokers :9092"
+    },
+    {
+      "from": "gui",
+      "to": "admin",
+      "label": "adminApi.urls :9644"
+    },
+    {
+      "from": "gui",
+      "to": "rest",
+      "label": "clusters[].url :8083"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Khai báo file được đọc",
+      "items": [
+        "compose/redpanda/compose.yaml: ../../console:/console:ro.",
+        "CONFIG_FILEPATH=/console/config.yaml chỉ đường dẫn bên trong container.",
+        "Console đọc console/config.yaml trên Windows/VM qua bind mount."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Khóa tham chiếu đầy đủ",
+      "items": [
+        "kafka.brokers -> redpanda:9092, đọc topic/message.",
+        "redpanda.adminApi.urls -> http://redpanda:9644, quản trị broker.",
+        "kafkaConnect.clusters[].url -> http://connect:8083, quản lý connector."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "DNS và port nội bộ",
+      "items": [
+        "Tất cả module này trên miqa-cdc-3 / 192.168.139.163.",
+        "redpanda và connect là tên service trong cùng Docker network.",
+        "Console dùng port nội bộ 9644, không dùng host port 19644."
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "VM2 | miqa-cdc-3 | 192.168.139.163",
+      "wraps": [
+        "compose",
+        "gui",
+        "yaml",
+        "kafka",
+        "admin",
+        "rest"
+      ],
+      "pad": 25
+    }
+  ]
+}

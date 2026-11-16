@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "b4f88498-4a65-4653-bf14-36fe91bbeb37",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/tmp/setup-v1-diagram-authoring/candidate.json",
+  "output": "/tmp/setup-v1-diagram-authoring/.archify/architecture-vm-ip-hostname-20261110-113808/vm-ip-hostname.html",
+  "specification": {
+    "sha256": "6bc986d28125e4c5eb15a66ec60c06af9332249174f70588a1180dcf3947fe3e",
+    "bytes": 5033
+  },
+  "artifact": {
+    "sha256": "15e9230d443660439bcf710e8ae3f6b556d82bb35c3fba5ad5ad3ce7c497d56d",
+    "bytes": 825182
+  }
+}

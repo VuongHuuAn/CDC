@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Đấu nối module theo màu",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/architecture-module-colors-20261110-144523/module-colors.html",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "database": {
+          "label": "PostgreSQL"
+        },
+        "backend": {
+          "label": "Kafka Connect"
+        },
+        "messagebus": {
+          "label": "Redpanda"
+        },
+        "cloud": {
+          "label": "ClickHouse"
+        },
+        "frontend": {
+          "label": "Console"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "PostgreSQL x3",
+      "sublabel": "miqa-cdc-1 | 192.168.139.162",
+      "pos": [
+        40,
+        360
+      ],
+      "size": [
+        220,
+        84
+      ],
+      "tag": "micall / misales / miqa"
+    },
+    {
+      "id": "connect",
+      "type": "backend",
+      "label": "Kafka Connect",
+      "sublabel": "3 source + 1 sink | .163",
+      "pos": [
+        490,
+        360
+      ],
+      "size": [
+        220,
+        84
+      ],
+      "tag": "miqa-cdc-3"
+    },
+    {
+      "id": "broker",
+      "type": "messagebus",
+      "label": "Redpanda",
+      "sublabel": "miqa-cdc-3 | 192.168.139.163",
+      "pos": [
+        490,
+        40
+      ],
+      "size": [
+        220,
+        84
+      ],
+      "tag": "ba topic outbox"
+    },
+    {
+      "id": "ch",
+      "type": "cloud",
+      "label": "ClickHouse",
+      "sublabel": "miqa-cdc-2 | 192.168.139.164",
+      "pos": [
+        940,
+        360
+      ],
+      "size": [
+        220,
+        84
+      ],
+      "tag": "cdc.outbox_event",
+      "icon": "database"
+    },
+    {
+      "id": "console",
+      "type": "frontend",
+      "label": "Redpanda Console",
+      "sublabel": "192.168.139.163:8080",
+      "pos": [
+        940,
+        40
+      ],
+      "size": [
+        220,
+        84
+      ],
+      "tag": "miqa-cdc-3"
+    }
+  ],
+  "connections": [
+    {
+      "from": "connect",
+      "to": "pg",
+      "label": "pgoutput :15432/25432/35432"
+    },
+    {
+      "from": "connect",
+      "to": "ch",
+      "label": "HTTP :18123 -> 8123"
+    },
+    {
+      "from": "connect",
+      "to": "broker",
+      "label": "Produce :9092"
+    },
+    {
+      "from": "connect",
+      "to": "broker",
+      "label": "Fetch :9092"
+    },
+    {
+      "from": "console",
+      "to": "broker",
+      "label": "Kafka :9092 / Admin :9644"
+    },
+    {
+      "from": "console",
+      "to": "connect",
+      "label": "REST :8083",
+      "fromSide": "bottom",
+      "toSide": "right"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Cách đọc",
+      "items": [
+        "Màu phân biệt module, khớp chú giải.",
+        "Mũi tên từ module chủ động mở kết nối tới module đích; không biểu diễn chiều dữ liệu trả về.",
+        "Connect mở kết nối tới PostgreSQL, Redpanda và ClickHouse; Console tới Redpanda và Connect.",
+        "Rê chuột lên module trong guide để xem file và khóa khai báo kết nối."
+      ]
+    }
+  ]
+}

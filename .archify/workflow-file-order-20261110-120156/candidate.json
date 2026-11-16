@@ -1,0 +1,220 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Vai trò các bước triển khai",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/workflow-file-order-20261110-120156/file-order.html"
+  },
+  "lanes": [
+    {
+      "id": "pg",
+      "label": "01 / Nguồn PostgreSQL"
+    },
+    {
+      "id": "target",
+      "label": "02 / Đích và broker"
+    },
+    {
+      "id": "pipeline",
+      "label": "03 / Kết nối và connector"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "pgcompose",
+      "lane": "pg",
+      "col": 0,
+      "type": "backend",
+      "label": "01 / Khởi chạy nguồn",
+      "sublabel": "Ba PostgreSQL độc lập",
+      "tag": "VM1 .162"
+    },
+    {
+      "id": "pgconf",
+      "lane": "pg",
+      "col": 1,
+      "type": "database",
+      "label": "02 / Bật logical WAL",
+      "sublabel": "Cho phép CDC đọc thay đổi",
+      "tag": "port 5432"
+    },
+    {
+      "id": "pginit",
+      "lane": "pg",
+      "col": 2,
+      "type": "database",
+      "label": "03 / Tạo bảng nguồn",
+      "sublabel": "Tạo role CDC + publication",
+      "tag": "data mới"
+    },
+    {
+      "id": "pgready",
+      "lane": "pg",
+      "col": 3,
+      "type": "database",
+      "label": "04 / Nguồn sẵn sàng",
+      "sublabel": "15432 / 25432 / 35432",
+      "tag": "sẵn sàng"
+    },
+    {
+      "id": "chcompose",
+      "lane": "target",
+      "col": 3,
+      "type": "backend",
+      "label": "05 / Khởi chạy đích",
+      "sublabel": "ClickHouse",
+      "tag": "VM3 .164"
+    },
+    {
+      "id": "chinit",
+      "lane": "target",
+      "col": 2,
+      "type": "database",
+      "label": "06 / Tạo bảng đích",
+      "sublabel": "cdc.outbox_event",
+      "tag": "data mới"
+    },
+    {
+      "id": "rpcompose",
+      "lane": "target",
+      "col": 1,
+      "type": "backend",
+      "label": "07 / Chạy nhóm CDC",
+      "sublabel": "Broker + worker + Console",
+      "tag": "VM2 .163"
+    },
+    {
+      "id": "rpconf",
+      "lane": "target",
+      "col": 0,
+      "type": "database",
+      "label": "08 / Mở dịch vụ Kafka",
+      "sublabel": "Kafka API + Admin API",
+      "tag": "9092 / 9644"
+    },
+    {
+      "id": "worker",
+      "lane": "pipeline",
+      "col": 0,
+      "type": "backend",
+      "label": "09 / Kết nối broker",
+      "sublabel": "Connect worker",
+      "tag": "redpanda:9092"
+    },
+    {
+      "id": "consoleconf",
+      "lane": "pipeline",
+      "col": 1,
+      "type": "frontend",
+      "label": "10 / Kết nối quản trị",
+      "sublabel": "Console → broker / worker",
+      "tag": "GUI :8080"
+    },
+    {
+      "id": "sources",
+      "lane": "pipeline",
+      "col": 2,
+      "type": "database",
+      "label": "11 / Đăng ký nguồn",
+      "sublabel": "Ba connector PostgreSQL",
+      "tag": "PUT :8083 / GUI"
+    },
+    {
+      "id": "sink",
+      "lane": "pipeline",
+      "col": 3,
+      "type": "database",
+      "label": "12 / Đăng ký đích",
+      "sublabel": "Một connector ClickHouse",
+      "tag": "PUT :8083 / GUI"
+    }
+  ],
+  "edges": [
+    {
+      "from": "pgcompose",
+      "to": "pgconf",
+      "label": "config_file"
+    },
+    {
+      "from": "pgconf",
+      "to": "pginit",
+      "label": "init khi mới"
+    },
+    {
+      "from": "pginit",
+      "to": "pgready",
+      "label": "chờ PG"
+    },
+    {
+      "from": "pgready",
+      "to": "chcompose",
+      "label": "tiếp theo"
+    },
+    {
+      "from": "chcompose",
+      "to": "chinit",
+      "label": "init khi mới"
+    },
+    {
+      "from": "chinit",
+      "to": "rpcompose",
+      "label": "đích sẵn sàng"
+    },
+    {
+      "from": "rpcompose",
+      "to": "rpconf",
+      "label": "--config"
+    },
+    {
+      "from": "rpconf",
+      "to": "worker",
+      "label": "broker healthy"
+    },
+    {
+      "from": "worker",
+      "to": "consoleconf",
+      "label": "đọc YAML"
+    },
+    {
+      "from": "consoleconf",
+      "to": "sources",
+      "label": "đăng ký source"
+    },
+    {
+      "from": "sources",
+      "to": "sink",
+      "label": "đăng ký sink"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Host triển khai",
+      "items": [
+        "VM1: miqa-cdc-1 / 192.168.139.162; VM2: miqa-cdc-3 / 192.168.139.163.",
+        "VM3: miqa-cdc-2 / 192.168.139.164.",
+        "Mũi tên là thứ tự triển khai trong lab; mỗi module đọc file của nó."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Console khai báo ba kết nối",
+      "items": [
+        "console/config.yaml: kafka.brokers -> redpanda:9092.",
+        "redpanda.adminApi.urls -> http://redpanda:9644.",
+        "kafkaConnect.clusters[].url -> http://connect:8083."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "JSON khai báo kết nối nguồn / đích",
+      "items": [
+        "source-micall.json / source-misales.json / source-miqa.json: database.hostname=.162; port=15432/25432/35432.",
+        "ch-sink-all.json: hostname=.164; port=18123; database=cdc; topic2TableMap -> outbox_event.",
+        "JSON đăng ký bằng REST/GUI, worker không tự đọc thư mục JSON; 3 source + 1 sink cùng worker."
+      ]
+    }
+  ]
+}

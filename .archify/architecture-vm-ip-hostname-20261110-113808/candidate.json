@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Module / IP / hostname / port",
+    "locale": "vi",
+    "output": ".archify/architecture-vm-ip-hostname-20261110-113808/vm-ip-hostname.html",
+    "quality_profile": "showcase",
+    "translations": {
+      "page.title": "Sơ đồ {title}",
+      "legend.title": "Chú giải",
+      "legend.architecture.frontend": "Giao diện",
+      "legend.architecture.backend": "Xử lý",
+      "legend.architecture.database": "Cơ sở dữ liệu",
+      "legend.architecture.messagebus": "Hàng đợi sự kiện",
+      "diagram.description.architecture": "Sơ đồ module, IP, hostname và port của ba VM."
+    }
+  },
+  "components": [
+    {
+      "id": "pg_call",
+      "type": "database",
+      "label": "pg-micall",
+      "sublabel": "15432 -> 5432",
+      "pos": [
+        50,
+        110
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "pg_sales",
+      "type": "database",
+      "label": "pg-misales",
+      "sublabel": "25432 -> 5432",
+      "pos": [
+        50,
+        290
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "pg_qa",
+      "type": "database",
+      "label": "pg-miqa",
+      "sublabel": "35432 -> 5432",
+      "pos": [
+        50,
+        470
+      ],
+      "size": [
+        180,
+        76
+      ]
+    },
+    {
+      "id": "sources",
+      "type": "backend",
+      "label": "3 source / connect",
+      "sublabel": "REST 8083 | cung worker voi sink",
+      "pos": [
+        450,
+        290
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "broker",
+      "type": "messagebus",
+      "label": "Redpanda",
+      "sublabel": "redpanda:9092 | Admin :9644",
+      "pos": [
+        900,
+        290
+      ],
+      "size": [
+        230,
+        76
+      ]
+    },
+    {
+      "id": "sink",
+      "type": "backend",
+      "label": "1 sink / connect",
+      "sublabel": "ch-sink-all | cung worker voi source",
+      "pos": [
+        900,
+        560
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "console",
+      "type": "frontend",
+      "label": "Console GUI",
+      "sublabel": "192.168.139.163:8080",
+      "pos": [
+        450,
+        560
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "ch",
+      "type": "database",
+      "label": "ClickHouse",
+      "sublabel": "18123 -> 8123 | 19000 -> 9000",
+      "pos": [
+        1330,
+        560
+      ],
+      "size": [
+        230,
+        76
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "VM1 | miqa-cdc-1 | 192.168.139.162",
+      "wraps": [
+        "pg_call",
+        "pg_sales",
+        "pg_qa"
+      ],
+      "pad": 24
+    },
+    {
+      "kind": "region",
+      "label": "VM2 | miqa-cdc-3 | 192.168.139.163",
+      "wraps": [
+        "sources",
+        "broker",
+        "sink",
+        "console"
+      ],
+      "pad": 26
+    },
+    {
+      "kind": "region",
+      "label": "VM3 | miqa-cdc-2 | 192.168.139.164",
+      "wraps": [
+        "ch"
+      ],
+      "pad": 24
+    }
+  ],
+  "connections": [
+    {
+      "from": "pg_call",
+      "to": "sources",
+      "label": "pgoutput :15432"
+    },
+    {
+      "from": "pg_sales",
+      "to": "sources",
+      "label": "pgoutput :25432"
+    },
+    {
+      "from": "pg_qa",
+      "to": "sources",
+      "label": "pgoutput :35432"
+    },
+    {
+      "from": "sources",
+      "to": "broker",
+      "label": "Produce :9092"
+    },
+    {
+      "from": "broker",
+      "to": "sink",
+      "label": "Fetch :9092"
+    },
+    {
+      "from": "sink",
+      "to": "ch",
+      "label": "HTTP :18123"
+    },
+    {
+      "from": "console",
+      "to": "sources",
+      "label": "REST :8083"
+    },
+    {
+      "from": "console",
+      "to": "broker",
+      "label": "Admin :9644"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "File triển khai theo VM",
+      "items": [
+        "VM1: compose/postgres/compose.yaml",
+        "VM2: compose/redpanda/compose.yaml",
+        "VM3: compose/clickhouse/compose.yaml"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Một container Connect",
+      "items": [
+        "Ba source và một sink chạy trong cùng container connect.",
+        "Console gọi connect:8083, redpanda:9092 và redpanda:9644 nội bộ.",
+        "Kafka 9092 không mở ra VM; Admin host 127.0.0.1:19644."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Nguồn đối chiếu",
+      "items": [
+        "IP/port: Compose, connect/connectors/*.json, console/config.yaml.",
+        "Hostname đã đối chiếu bằng SSH hostname trên cả ba VM.",
+        "Source Windows không có Git; không gán provenance commit."
+      ]
+    }
+  ]
+}

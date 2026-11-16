@@ -1,0 +1,68 @@
+name: setup-v1-3vm
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v26.1.12
+    restart: unless-stopped
+    entrypoint: [bash, -ec]
+    command:
+    - |
+      chown redpanda:redpanda /var/lib/redpanda/data
+      exec runuser -u redpanda -- rpk redpanda start --config /redpanda/redpanda.yaml --smp 1
+    ports: ['127.0.0.1:19644:9644']
+    volumes:
+    - ../../redpanda:/redpanda
+    - ../../data/redpanda:/var/lib/redpanda/data
+    healthcheck:
+      test: [CMD, rpk, cluster, health, --config, /redpanda/redpanda.yaml, --exit-when-healthy]
+      interval: 5s
+      retries: 30
+    user: 0:0
+  connect:
+    image: quay.io/debezium/connect:3.6.0.Final
+    user: "0:0" # Connect chạy bằng root để ghi thư mục bind.
+    restart: unless-stopped
+    environment:
+      BOOTSTRAP_SERVERS: redpanda:9092
+      GROUP_ID: setupv1-connect
+      CONFIG_STORAGE_TOPIC: _connect_configs
+      OFFSET_STORAGE_TOPIC: _connect_offsets
+      STATUS_STORAGE_TOPIC: _connect_status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
+      REST_HOST_NAME: 0.0.0.0
+      ADVERTISED_HOST_NAME: connect
+      CONNECT_CONFIG_PROVIDERS: env
+      CONNECT_CONFIG_PROVIDERS_ENV_CLASS: org.apache.kafka.common.config.provider.EnvVarConfigProvider
+      MICALL_DEBEZIUM_USER: ${MICALL_DEBEZIUM_USER:?}
+      MICALL_DEBEZIUM_PASSWORD: ${MICALL_DEBEZIUM_PASSWORD:?}
+      MISALES_DEBEZIUM_USER: ${MISALES_DEBEZIUM_USER:?}
+      MISALES_DEBEZIUM_PASSWORD: ${MISALES_DEBEZIUM_PASSWORD:?}
+      MIQA_DEBEZIUM_USER: ${MIQA_DEBEZIUM_USER:?}
+      MIQA_DEBEZIUM_PASSWORD: ${MIQA_DEBEZIUM_PASSWORD:?}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:?}
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    ports: ['192.168.139.163:8083:8083']
+    volumes:
+    - ../../connect/plugins/clickhouse-kafka-connect-v1.5.0:/kafka/connect/clickhouse-kafka-connect:ro
+    - ../../data/connect/config:/kafka/config
+    - ../../data/connect/data:/kafka/data
+    - ../../data/connect/logs:/kafka/logs
+    healthcheck:
+      test: [CMD-SHELL, 'curl -fsS http://127.0.0.1:8083/']
+      interval: 5s
+      retries: 30
+  console:
+    image: docker.redpanda.com/redpandadata/console:v3.12.0
+    restart: unless-stopped
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    environment:
+      CONFIG_FILEPATH: /console/config.yaml
+    ports: ['192.168.139.163:8080:8080']
+    volumes:
+    - ../../console:/console:ro

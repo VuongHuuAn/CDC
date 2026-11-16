@@ -1,0 +1,65 @@
+name: setup-v1-3vm
+services:
+  pg-micall:
+    image: postgres:18.4
+    restart: unless-stopped
+    command: [postgres, -c, config_file=/postgres/postgresql.conf]
+    environment:
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      POSTGRES_DB: micall
+      POSTGRES_USER: ${MICALL_PG_USER:?}
+      POSTGRES_PASSWORD: ${MICALL_PG_PASSWORD:?}
+      DEBEZIUM_USER: ${MICALL_DEBEZIUM_USER:?}
+      DEBEZIUM_PASSWORD: ${MICALL_DEBEZIUM_PASSWORD:?}
+      TZ: Asia/Ho_Chi_Minh
+    ports: ['192.168.139.162:15432:5432']
+    volumes:
+    - ../../postgres:/postgres:ro
+    - ../../data/pg-micall:/var/lib/postgresql
+    - ../../postgres/init.sql:/docker-entrypoint-initdb.d/10-outbox.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, 'PGPASSWORD="$${POSTGRES_PASSWORD}" psql -h 127.0.0.1 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -c "SELECT 1" >/dev/null']
+      interval: 5s
+      retries: 30
+  pg-misales:
+    image: postgres:18.4
+    restart: unless-stopped
+    command: [postgres, -c, config_file=/postgres/postgresql.conf]
+    environment:
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      POSTGRES_DB: misales
+      POSTGRES_USER: ${MISALES_PG_USER:?}
+      POSTGRES_PASSWORD: ${MISALES_PG_PASSWORD:?}
+      DEBEZIUM_USER: ${MISALES_DEBEZIUM_USER:?}
+      DEBEZIUM_PASSWORD: ${MISALES_DEBEZIUM_PASSWORD:?}
+      TZ: Asia/Ho_Chi_Minh
+    ports: ['192.168.139.162:25432:5432']
+    volumes:
+    - ../../postgres:/postgres:ro
+    - ../../data/pg-misales:/var/lib/postgresql
+    - ../../postgres/init.sql:/docker-entrypoint-initdb.d/10-outbox.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, 'PGPASSWORD="$${POSTGRES_PASSWORD}" psql -h 127.0.0.1 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -c "SELECT 1" >/dev/null']
+      interval: 5s
+      retries: 30
+  pg-miqa:
+    image: postgres:18.4
+    restart: unless-stopped
+    command: [postgres, -c, config_file=/postgres/postgresql.conf]
+    environment:
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      POSTGRES_DB: miqa
+      POSTGRES_USER: ${MIQA_PG_USER:?}
+      POSTGRES_PASSWORD: ${MIQA_PG_PASSWORD:?}
+      DEBEZIUM_USER: ${MIQA_DEBEZIUM_USER:?}
+      DEBEZIUM_PASSWORD: ${MIQA_DEBEZIUM_PASSWORD:?}
+      TZ: Asia/Ho_Chi_Minh
+    ports: ['192.168.139.162:35432:5432']
+    volumes:
+    - ../../postgres:/postgres:ro
+    - ../../data/pg-miqa:/var/lib/postgresql
+    - ../../postgres/init.sql:/docker-entrypoint-initdb.d/10-outbox.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, 'PGPASSWORD="$${POSTGRES_PASSWORD}" psql -h 127.0.0.1 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" -c "SELECT 1" >/dev/null']
+      interval: 5s
+      retries: 30
